@@ -39,20 +39,23 @@ public class ImageController {
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<?> getImage(@PathVariable("id") long id) {
-    // TODO
-    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    return ResponseEntity
+            .ok()
+            .contentType(MediaType.IMAGE_JPEG)
+            .body(imageDao.retrieve(id).get().getData().clone());
   }
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<?> deleteImage(@PathVariable("id") long id) {
-    // TODO
+    imageDao.delete(imageDao.retrieve(id).get());
     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 
   @RequestMapping(value = "/images", method = RequestMethod.POST)
   public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file,
       RedirectAttributes redirectAttributes) {
-    // TODO
+      Optional <Image> image = Optional.of(new Image(file.getName(),file.getBytes()));
+      imageDao.create(image.get());
     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 
