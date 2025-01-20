@@ -1,17 +1,10 @@
-package pdl.backend;
+package pdl.backend.java_files.java_files;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Optional;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +16,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.IOException;
+import java.util.Optional;
 
 @RestController
 public class ImageController {
@@ -46,17 +42,25 @@ public class ImageController {
   }
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.DELETE)
-  public ResponseEntity<?> deleteImage(@PathVariable("id") long id) {
+  public ResponseEntity<?> deleteImage(@PathVariable("id") long id) throws JsonProcessingException {
     imageDao.delete(imageDao.retrieve(id).get());
-    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    String reponse =  "/"+imageDao.retrieve(id).get().getName()+"/"+id+"-> ajout d'une image au format JPEG";
+    return ResponseEntity
+            .ok(mapper.writeValueAsString(reponse));
   }
 
   @RequestMapping(value = "/images", method = RequestMethod.POST)
   public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file,
       RedirectAttributes redirectAttributes) {
+    try {
       Optional <Image> image = Optional.of(new Image(file.getName(),file.getBytes()));
+      String reponse =  imageDao.retrieve(image.get().getId()).get().getName() +"-> ajout d'une image au format JPEG";
       imageDao.create(image.get());
-    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+      return  ResponseEntity
+              .ok(mapper.writeValueAsString(reponse));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @RequestMapping(value = "/images", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
