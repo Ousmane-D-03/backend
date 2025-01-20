@@ -31,19 +31,20 @@ public class ImageDao implements Dao<Image> {
 
   @Override
   public Optional<Image> retrieve(final long id) {
-    // TODO
-    return Optional.empty();
+    Image img = images.get(id);
+    return Optional.ofNullable(img);
   }
 
   @Override
   public List<Image> retrieveAll() {
-    // TODO
-    return new ArrayList<Image>();
+    ArrayList<Image> listImage = new ArrayList<Image>();
+    images.forEach((id,img)->{listImage.add(img);});
+    return listImage;
   }
 
   @Override
   public void create(final Image img) {
-    // TODO
+    images.put(img.getId(),img);
   }
 
   @Override
@@ -53,6 +54,6 @@ public class ImageDao implements Dao<Image> {
 
   @Override
   public void delete(final Image img) {
-    // TODO
+    images.remove(img.getId());
   }
 }
