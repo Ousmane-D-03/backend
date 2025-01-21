@@ -1,11 +1,14 @@
 package pdl.backend.java_files.java_files;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -58,7 +61,7 @@ public class ImageController {
   @RequestMapping(value = "/images", method = RequestMethod.POST)
   public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file,
       RedirectAttributes redirectAttributes) throws IOException {
-    Optional<Image> img = Optional.of(new Image(file.getName(), file.getBytes()));
+    Optional<Image> img = Optional.of(new Image(file.getOriginalFilename(), file.getBytes()));
     if (img.isPresent()) {
       imageDao.create(img.get());
       return ResponseEntity.status(HttpStatus.CREATED)
@@ -72,7 +75,11 @@ public class ImageController {
   @ResponseBody
   public ArrayNode getImageList() {
     ArrayNode nodes = mapper.createArrayNode();
-    // TODO
+    imageDao.retrieveAll().forEach(image->{
+      ObjectNode node = mapper.createObjectNode();
+      node.put("name", image.getName());
+      node.put("id", image.getId());
+      nodes.add(node);});
     return nodes;
   }
 

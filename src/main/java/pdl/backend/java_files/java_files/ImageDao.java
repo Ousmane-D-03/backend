@@ -44,7 +44,8 @@ public class ImageDao implements Dao<Image> {
 
   @Override
   public void create(final Image img) {
-    images.put(img.getId(), img);
+    if(images.containsKey(img.getId()-1)) images.put(img.getId(), img);
+    images.put(img.getId()-1, img);
   }
 
   @Override
