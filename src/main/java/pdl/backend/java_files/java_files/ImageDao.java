@@ -44,7 +44,7 @@ public class ImageDao implements Dao<Image> {
 
   @Override
   public void create(final Image img) {
-    images.put(img.getId(),img);
+    images.put(img.getId(), img);
   }
 
   @Override
@@ -54,6 +54,6 @@ public class ImageDao implements Dao<Image> {
 
   @Override
   public void delete(final Image img) {
-    images.remove(img.getId());
+    images.remove(img.getId(),img);
   }
 }
